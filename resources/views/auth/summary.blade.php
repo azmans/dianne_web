@@ -3,7 +3,6 @@
 @section('title', 'Summary | DIANNE')
 
 @section('content')
-
     <div class="content" id="summary">
         <div class="row">
            <div class="col-lg-3 col-md-6 col-sm-6">
@@ -12,13 +11,13 @@
                        <div class="row">
                            <h3>Summary</h3>
                            <div class="form-group">
-                               <label for="start">Summary date:</label>
-                               <input type="date" id="start" name="summary-date"
+                               <label for="start">Filter date:</label>
+                               <input type="date" id="start" name="summary-date" class="form-control"
                                       value="2018-07-22"
                                       min="2018-01-01" max="2080-12-31">
 
-                               <button class="button_1 sumbtn">View</button>
-                               <button class="button_1 sumbtn">Export</button>
+                               <button class="btn button_1 sumbtn">View</button>
+                               <button class="btn button_1 sumbtn">Export</button>
                            </div>
                        </div>
                    </div>
@@ -56,7 +55,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer ">
+                    <div class="card-footer">
                         <hr>
                     </div>
                 </div>
@@ -103,7 +102,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer ">
+                    <div class="card-footer">
                         <hr>
                         <div class="stats">
                             <i class="fa fa-calendar-o"></i> Response Due Date
@@ -146,7 +145,7 @@
                                     Accepted
                                 </td>
                                 <td class="text-right">
-                                    <button class="button_1 listbtn1">View</button>
+                                    <button class="btn button_1 listbtn1">View</button>
                                 </td>
                             </tr>
                             <tr>
@@ -160,7 +159,7 @@
                                     Accepted
                                 </td>
                                 <td class="text-right">
-                                    <button class="button_1 listbtn1">View</button>
+                                    <button class="btn button_1 listbtn1">View</button>
                                 </td>
                             </tr>
                             <tr>
@@ -174,7 +173,7 @@
                                     Accepted
                                 </td>
                                 <td class="text-right">
-                                    <button class="button_1 listbtn1">View</button>
+                                    <button class="btn button_1 listbtn1">View</button>
                                 </td>
                             </tr>
                             <tr>
@@ -188,7 +187,7 @@
                                     Accepted
                                 </td>
                                 <td class="text-right">
-                                    <button class="button_1 listbtn1">View</button>
+                                    <button class="btn button_1 listbtn1">View</button>
                                 </td>
                             </tr>
                             </tbody>
@@ -202,13 +201,13 @@
 
             <div class="col-md-3">
                 <div class="card ">
-                    <div class="card-header ">
+                    <div class="card-header">
                         <h5 class="card-title">Feedback</h5>
                     </div>
-                    <div class="card-body ">
-                        <div class="">
-                            <table class="table" id="">
-                                <thead class=" text-primary">
+                    <div class="card-body">
+                        <div>
+                            <table class="table">
+                                <thead class="text-primary">
                                 <th>
                                     Vendor
                                 </th>

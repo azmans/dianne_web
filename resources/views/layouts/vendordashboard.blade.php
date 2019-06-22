@@ -57,22 +57,16 @@
                         <p>My Clients</p>
                     </a>
                 </li>
-                <li>
-                    <a href="./ #">
+                <li{{ request()->is('/vendor/income') ? 'class=active' : '' }}>
+                    <a href="/vendor/income">
                         <i class="nc-icon nc-money-coins"></i>
-                        <p>Payments</p>
+                        <p>Income</p>
                     </a>
                 </li>
                 <li>
                     <a href="./upgrade.html">
                         <i class="nc-icon nc-satisfied"></i>
                         <p>Feedbacks</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="/upgrade.html">
-                        <i class="nc-icon nc-credit-card"></i>
-                        <p>Credit/Debit Card</p>
                     </a>
                 </li>
             </ul>

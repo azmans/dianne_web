@@ -35,8 +35,8 @@
                         <p>My Profile</p>
                     </a>
                 </li>
-                <li>
-                    <a href="./ #">
+                <li{{ request()->is('summary') ? ' class=active' : '' }}>
+                    <a href="/summary">
                         <i class="nc-icon nc-layout-11"></i>
                         <p>Summary</p>
                     </a>

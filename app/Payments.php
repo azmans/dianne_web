@@ -2,10 +2,13 @@
 
 namespace App;
 
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Model;
 
 class Payments extends Model
 {
+    use Auditable;
+
     protected $table = 'payments';
 
     protected $fillable = [

@@ -39,6 +39,7 @@
                             </tr>
                         @endforelse
                     </table>
+                    {{ $lists->links() }}
                 </div>
             </div>
         </div>

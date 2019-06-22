@@ -73,6 +73,7 @@
                     @endif
                     </tbody>
                 </table>
+                {{ $details->links() }}
             </div>
         </div>
     </div>

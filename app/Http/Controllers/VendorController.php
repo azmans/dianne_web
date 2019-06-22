@@ -10,6 +10,7 @@ use App\MyClients;
 use App\Portfolio;
 use App\User;
 use App\Vendor;
+use App\Income;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -253,5 +254,71 @@ class VendorController extends Controller
 
         $portfolio->update(['vendor_portfolio' => $request->vendor_portfolio]);
         return back()->withMessage('You have saved changes to your couple page successfully.');
+    }
+
+    public function incomes()
+    {
+        $lists = DB::table('incomes')
+            ->select(['incomes.*', 'soon_to_weds.bride_first_name', 'soon_to_weds.bride_last_name', 'soon_to_weds.groom_first_name',
+                'soon_to_weds.groom_last_name'])
+            ->join('soon_to_weds', 'soon_to_weds.id', '=', 'incomes.soon_to_wed_id')
+            ->where('incomes.vendor_id', '=', auth()->guard('vendor')->user()->id)
+            ->get();
+
+        return view('auth.income.incomes')->with(['lists' => $lists]);
+    }
+
+    public function add_income($id)
+    {
+        $vendors = Vendor::find($id);
+
+        $users = array('user' => DB::table('my_clients')
+            ->join('soon_to_weds', 'soon_to_weds.id', '=', 'my_clients.soon_to_wed_id')
+            ->where('my_clients.soon_to_wed_id', $id)
+            ->get());
+
+        return view('auth.income.add', $users)->with(['vendors' => $vendors]);
+    }
+
+    public function save_income(Request $request, $id)
+    {
+        $vendors = Vendor::find($id);
+
+        $vendors->soon_to_wed_incomes()->attach(auth()->guard('vendor')->user()->id, [
+            'soon_to_wed_id' => $request['soon_to_wed_id'],
+            'payment_type' => $request['payment_type'],
+            'status' => $request['status'],
+            'date_paid' => $request['date_paid']
+        ]);
+
+        return view('auth.income.incomes')->withMessage('You have successfully added a payment transaction.');
+    }
+
+    public function edit_income($id)
+    {
+        $income = Income::find($id);
+
+        return view('auth.income.edit')->with(['income' => $income]);
+    }
+
+    public function update_income(Request $request, $id)
+    {
+        $income = Income::find($id);
+
+        $income->payment_type = $request->payment_type;
+        $income->is_installment = $request->input('is_installment')=='on' ? 1:0;
+        $income->is_full = $request->input('is_full')=='on' ? 1:0;
+        $income->amount = $request->amount;
+        $income->status = $request->status;
+        $income->date_paid = $request->date_paid;
+
+        $income->update(['payment_type' => $request->payment_type,
+            'is_installment' => $request->input('is_installment')=='on' ? 1:0,
+            'is_full' => $request->input('is_full')=='on' ? 1:0,
+            'amount' => $request->amount,
+            'status' => $request->status,
+            'date_paid' => $request->date_paid]);
+
+        return view('auth.income.incomes')->withMessage('You have saved changes to your couple page successfully.');
     }
 }

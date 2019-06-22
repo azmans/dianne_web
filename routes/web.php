@@ -47,6 +47,17 @@ Route::middleware(['approved'])->group(function() {
     Route::get('/report/soon-to-wed/{id}', 'VendorController@report')->name('vendor.report');
     Route::post('/report/soon-to-wed/{id}/submit', 'VendorController@submit_report')->name('vendor.report.submit');
 
+    // View incomes page
+    Route::get('/vendor/income', 'VendorController@incomes')->name('vendor.income.incomes');
+    // Add income
+    Route::get('/vendor/{id}/income/add', 'VendorController@add_income')->name('vendor.income.add');
+    // Insert income into the database
+    Route::post('/vendor/{id}/income/add', 'VendorController@save_income');
+    // Edit income
+    Route::get('/vendor/{id}/income/edit', 'VendorController@edit_income')->name('vendor.income.edit');
+    // Update income in the database
+    Route::post('/vendor/{id}/income/edit', 'VendorController@update_income');
+
     // View vendor bookings
     Route::get('/vendor/bookings', 'VendorController@requests')->name('vendor.bookings');
     // Accept booking
@@ -78,6 +89,11 @@ Route::middleware(['admin'])->group(function () {
     // View admin dashboard
     Route::get('/admin/dashboard', 'AdminController@index')->name('admin.dashboard');
 
+    // View vendors
+    Route::get('/admin/vendors', 'AdminController@vendors')->name('admin.vendors');
+    // View soon-to-weds
+    Route::get('/admin/soon-to-weds', 'AdminController@soon_to_weds')->name('admin.users');
+
     // View soon-to-wed profile
     Route::get('/admin/view/soon-to-wed/{id}', 'AdminController@view_stw')->name('admin.view-stw');
     // View vendor profile
@@ -86,7 +102,7 @@ Route::middleware(['admin'])->group(function () {
     Route::get('/admin/view/vendor/{id}/portfolio')->name('admin.view-portfolio');
 
     // View list of vendors to be approved
-    Route::get('/admin/vendors', 'AdminController@vendors')->name('admin.vendors.index');
+    Route::get('/admin/vendors/approve', 'AdminController@new_vendors')->name('admin.new-vendors');
     // Approve vendor account
     Route::get('/admin/vendors/{vendor_id}/approve', 'AdminController@approve')->name('admin.vendors.approve');
     // Reject vendor account
@@ -96,12 +112,30 @@ Route::middleware(['admin'])->group(function () {
     Route::get('/admin/reports/soon-to-weds', 'AdminController@stw_reports')->name('admin.stw-reports');
     // View list of vendor reports
     Route::get('/admin/reports/vendors', 'AdminController@vendor_reports')->name('admin.vendor-reports');
+
+    // View audit logs
+    Route::get('/admin/audits', 'AdminController@audit_logs')->name('admin.audits');
+    // View blacklist
+    Route::get('/admin/blacklist', 'AdminController@blacklist')->name('admin.blacklist.blacklist');
+
+    // Blacklist soon-to-wed
+    Route::get('/admin/soon-to-wed/{id}/blacklist', 'AdminController@view_blacklist_stw')->name('admin.blacklist.add-stw');
+    // Insert record into database
+    Route::post('/admin/soon-to-wed/{id}/blacklist', 'AdminController@blacklist_stw');
+
+    // Blacklist vendor
+    Route::get('/admin/vendor/{id}/blacklist', 'AdminController@view_blacklist_vendor')->name('admin.blacklist-add-vendor');
+    // Insert record into database
+    Route::post('/admin/vendor/{id}/blacklist', 'AdminController@blacklist_vendor');
 });
 
 Route::get('/vendor/register', 'Vendor\RegisterController@showRegistrationForm')->name('vendor.register');
 Route::post('/vendor/register', 'Vendor\RegisterController@register');
 
 Route::group(['middleware' => ['web']], function() {
+    // View summary page
+    Route::get('/summary', 'SoonToWedController@summary')->name('auth.summary');
+
     // View pay to vendor page
     Route::get('/pay/vendor/{id}', 'PaymentController@index')->name('auth.paypal');
     Route::post('/paypal', 'PaymentController@pay');
@@ -227,7 +261,5 @@ Route::group(['middleware' => ['web']], function() {
 Route::get('/invitation/{id}/rsvp', 'GuestController@view_rsvp')->name('rsvp');
 // Submit RSVP
 Route::post('/invitation/{id}/rsvp', 'GuestController@submit_rsvp');
-
-//Route::get('/home', 'AdminController@index')->name('admin.home');
 
 Route::get('/marketplace', 'MarketplaceController@index');

@@ -350,12 +350,12 @@ class SoonToWedController extends Controller
                 DB::raw('SUM(status = "Pending") as pending'),
                 DB::raw('SUM(status = "Declined") as declined'))
             ->where('soon_to_wed_id', Auth::id())
-            ->get();;
+            ->get();
 
         $details = DB::table('guests')
             ->leftJoin('meal_types', 'meal_types.id', '=', 'guests.meal_type_id')
             ->where('guests.soon_to_wed_id', Auth::id())
-            ->get();
+            ->paginate(10);
 
         return view('auth.guestlist.guestlist')->with(['details' => $details])->with(['guests' => $guests]);
     }
@@ -537,7 +537,7 @@ class SoonToWedController extends Controller
                 'payments.amount', 'vendors.first_name', 'vendors.last_name', 'vendors.vendor_type', 'vendors.company_name'])
             ->join('vendors', 'vendors.id', '=', 'payments.vendor_id')
             ->where('payments.soon_to_wed_id', '=', Auth::id())
-            ->get();
+            ->paginate(15);
 
         return view('auth.payment.payments')->with(['lists' => $lists]);
     }
@@ -618,6 +618,16 @@ class SoonToWedController extends Controller
         return view('auth.feedback')->withMessage('You have successfully submitted your feedback to this vendor.');
     }
 
+    public function paypal()
+    {
+        return view('auth.paypal');
+    }
+
+    public function summary()
+    {
+        return view('auth.summary');
+    }
+
     /*public function view_feedback()
     {
         $feedbacks = DB::table('feedbacks')
@@ -626,9 +636,4 @@ class SoonToWedController extends Controller
 
         return view('auth.view')->with(['feedbacks' => $feedbacks]);
     }*/
-
-    public function paypal()
-    {
-        return view('auth.paypal');
-    }
 }

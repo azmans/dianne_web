@@ -21,7 +21,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $fillable = [
         'user_type', 'bride_first_name', 'bride_last_name', 'groom_first_name', 'groom_last_name', 'email',
-        'password', 'dob', 'wedding_date', 'profile_picture', 'blacklisted_at'
+        'password', 'dob', 'wedding_date', 'profile_picture', 'last_login_at', 'blacklisted_at'
     ];
 
     /**
@@ -95,6 +95,14 @@ class User extends Authenticatable implements MustVerifyEmail
             ->withTimestamps();
     }
 
+    public function vendor_incomes()
+    {
+        return $this->belongsToMany('App\Vendor', 'incomes', 'soon_to_wed_id',
+            'vendor_id')->withPivot('amount', 'payment_type', 'is_full', 'status',
+            'is_installment', 'date_paid')
+            ->withTimestamps();
+    }
+
     public function budgets()
     {
         return $this->hasMany('App\Budget', 'soon_to_wed_id');
@@ -120,6 +128,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function couple_pages()
     {
         return $this->hasMany('App\CouplePage', 'soon_to_wed_id');
+    }
+
+    public function soon_to_wed_blacklists()
+    {
+        return $this->hasMany('App\Blacklist', 'soon_to_wed_id');
     }
 
     /*public function payments()

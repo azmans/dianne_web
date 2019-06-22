@@ -2,13 +2,14 @@
 
 namespace App;
 
+use App\Traits\Auditable;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 
 class Guest extends Model
 {
-    use Notifiable;
+    use Notifiable, Auditable;
 
     protected $table = 'guests';
 

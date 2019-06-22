@@ -42,18 +42,30 @@
                         </a>
                     </li>
                     <li>
-                        <a data-toggle="collapse" href="#user_reports">
-                            <i class="nc-icon nc-bell-55"></i>
-                            <p>User Reports
+                        <a data-toggle="collapse" href="#user_management">
+                            <i class="nc-icon nc-settings-gear-65"></i>
+                            <p>User Management
                                 <b class="caret"></b>
                             </p>
                         </a>
 
-                        <div class="collapse" id="user_reports">
+                        <div class="collapse" id="user_management">
                             <ul class="nav">
                                 <li>
+                                    <a href="/admin/vendors">
+                                        <span class="sidebar-mini-icon"><i class="nc-icon nc-diamond"></i></span>
+                                        <span class="sidebar-normal">Vendors</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/soon-to-weds">
+                                        <span class="sidebar-mini-icon"><i class="nc-icon nc-satisfied"></i></span>
+                                        <span class="sidebar-normal">Soon-to-weds</span>
+                                    </a>
+                                </li>
+                                <li>
                                     <a href="/admin/reports/soon-to-weds">
-                                        <span class="sidebar-mini-icon"><i class="nc-icon nc-tap-01"></i></span>
+                                        <span class="sidebar-mini-icon"><i class="nc-icon nc-bell-55"></i></span>
                                         <span class="sidebar-normal">Soon-to-wed Reports</span>
                                     </a>
                                 </li>
@@ -63,6 +75,18 @@
                                         <span class="sidebar-normal">Vendor Reports</span>
                                     </a>
                                 </li>
+                                <li>
+                                    <a href="/admin/audits">
+                                        <span class="sidebar-mini-icon"><i class="nc-icon nc-tap-01"></i></span>
+                                        <span class="sidebar-normal">Audits</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/blacklist">
+                                        <span class="sidebar-mini-icon"><i class="nc-icon nc-key-05"></i></span>
+                                        <span class="sidebar-normal">Blacklist</span>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </li>
@@ -70,12 +94,6 @@
                         <a href="/admin/vendors">
                             <i class="nc-icon nc-bulb-63"></i>
                             <p>New Vendors</p>
-                        </a>
-                    </li>
-                    <li{{ request()->is('audits') ? ' class=active' : '' }}>
-                        <a href="./ #">
-                            <i class="nc-icon nc-tap-01"></i>
-                            <p>Audits</p>
                         </a>
                     </li>
                     <li{{ request()->is('content-management') ? ' class=active' : '' }}>
@@ -138,7 +156,7 @@
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="nc-icon nc-settings-gear-65"></i>
                                     <p>
-                                        <span class="d-lg-none d-md-block">Some Actions</span>
+                                        <span class="d-lg-none d-md-block"></span>
                                     </p>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">

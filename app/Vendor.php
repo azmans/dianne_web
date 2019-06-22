@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Traits\Auditable;
 use App\Notifications\VendorResetPassword;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -9,7 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Vendor extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, Auditable;
 
     protected $guard = 'vendor';
 
@@ -24,7 +25,7 @@ class Vendor extends Authenticatable
      */
     protected $fillable = [
         'user_type', 'first_name', 'last_name', 'email', 'password', 'mobile', 'company_name', 'vendor_type', 'price_range',
-        'tin', 'sec_dti_number', 'mayors_permit', 'city', 'profile_picture', 'approved_at', 'blacklisted_at'
+        'tin', 'sec_dti_number', 'mayors_permit', 'city', 'profile_picture', 'approved_at', 'blacklisted_at', 'last_login_at'
     ];
 
     /**
@@ -115,8 +116,21 @@ class Vendor extends Authenticatable
             ->withTimestamps();
     }
 
+    public function soon_to_wed_incomes()
+    {
+        return $this->belongsToMany('App\User', 'incomes', 'soon_to_wed_id',
+            'vendor_id')->withPivot('amount', 'payment_type', 'is_full', 'is_installment',
+            'status', 'date_paid')
+            ->withTimestamps();
+    }
+
     public function portfolios()
     {
         return $this->hasMany('App\Portfolio', 'vendor_id');
+    }
+
+    public function vendor_blacklists()
+    {
+        return $this->hasMany('App\Blacklist', 'vendor_id');
     }
 }

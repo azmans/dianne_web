@@ -23,9 +23,13 @@
                     <p>SEC/DTI Number: {{ $profile->sec_dti_number }}</p>
                     <p>TIN: {{ $profile->tin }}</p>
                     <p>Mayor's Permit: {{ $profile->mayors_permit }}</p>
+                    <div class="buttons row">
+                        <a href="/vendor/dashboard/edit/{{ $profile->id }}" class="btn button_1">Edit Profile</a>
+                        <a href="#" class="btn button_1" role="button">Delete Profile</a>
+                    </div>
                 </div>
 
-                <div class="profile-picture">
+                <div class="profile-picture" style="margin-bottom: 8%">
                     <img class="profile-pic img-responsive" id="vendorprofilepic" src="/storage/images/{{ $profile->profile_picture }}">
 
                     <form method="POST" enctype="multipart/form-data">
@@ -34,15 +38,10 @@
                         <div class="upload-pic">
                             <input type="file" accept="image/png, image/jpg, image/jpeg, image/gif" class="form-control-file" name="profile_picture" id="profile_picture">
                         </div>
-                        <div class="row">
+                        <div class="row" style="margin-top: 40%">
                             <button type="submit" class="btn button_1">Update Picture</button>
                         </div>
                     </form>
-
-                    <div class="buttons row">
-                        <a href="/vendor/dashboard/edit/{{ $profile->id }}" class="btn button_1">Edit Profile</a>
-                        <a href="#" class="btn button_1" role="button">Delete Profile</a>
-                    </div>
                 </div>
 
                 @endforeach

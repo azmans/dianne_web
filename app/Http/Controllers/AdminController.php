@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\BlacklistUser;
 use DB;
 use App\User;
 use App\Vendor;
+use App\Blacklist;
+use App\Notifications\BlacklistVendor;
 use App\Notifications\VendorApproved;
 use App\Notifications\VendorRejected;
 use Illuminate\Http\Request;
@@ -31,12 +34,12 @@ class AdminController extends Controller
         return view('admin.dashboard');
     }
 
-    public function vendors()
+    public function new_vendors()
     {
         $vendors = Vendor::whereNull('approved_at')
             ->get();
 
-        return view('admin.vendors', compact('vendors'));
+        return view('admin.new-vendors', compact('vendors'));
     }
 
     public function approve($id)
@@ -61,6 +64,20 @@ class AdminController extends Controller
         }
 
         return redirect()->route('admin.bookings.index')->withMessage('Vendor has been rejected.');
+    }
+
+    public function soon_to_weds()
+    {
+        $users = User::all();
+
+        return view('admin.users')->with(['users' => $users]);
+    }
+
+    public function vendors()
+    {
+        $vendors = Vendor::all();
+
+        return view('admin.vendors')->with(['vendors' => $vendors]);
     }
 
     public function view_stw($id)
@@ -119,5 +136,100 @@ class AdminController extends Controller
             ->get();
 
         return view('admin.vendor-reports')->with(['reports' => $reports]);
+    }
+
+    public function view_blacklist_stw($id)
+    {
+        $user = User::find($id);
+
+        return view('admin.blacklist.add-stw')->with(['user' => $user]);
+    }
+
+    public function blacklist_stw(Request $request, $id)
+    {
+        $users = User::find($id);
+
+        $users->blacklisted_at = now();
+
+        $users->save();
+
+        $blacklist = new Blacklist;
+        $blacklist->soon_to_wed_id = $request->soon_to_wed_id;
+        $blacklist->reason = $request->reason;
+
+        $users->soon_to_wed_blacklists()->save($blacklist);
+
+        if ($users) {
+            $users->notify(new BlacklistUser($users));
+        }
+
+        return back()->withMessage('You have successfully blacklisted this user.');
+    }
+
+    public function view_blacklist_vendor($id)
+    {
+        $vendor = Vendor::find($id);
+
+        return view('admin.blacklist.add-vendor')->with(['vendor' => $vendor]);
+    }
+
+    public function blacklist_vendor(Request $request, $id)
+    {
+        $vendors = Vendor::find($id);
+
+        $vendors->blacklisted_at = now();
+
+        $vendors->save();
+
+        $blacklist = new Blacklist;
+        $blacklist->vendor_id = $request->vendor_id;
+        $blacklist->reason = $request->reason;
+
+        $vendors->vendor_blacklists()->save($blacklist);
+
+        if ($vendors) {
+            $vendors->notify(new BlacklistVendor($vendors));
+        }
+
+        return back()->withMessage('You have successfully blacklisted this user.');
+    }
+
+    public function blacklist()
+    {
+        $blacklists = DB::table('blacklists')
+            ->select('blacklists.*', 'soon_to_weds.*', 'vendors.*')
+            ->leftJoin('vendors', 'vendors.id', '=', 'blacklists.vendor_id')
+            ->leftJoin('soon_to_weds', 'soon_to_weds.id', '=', 'blacklists.soon_to_wed_id')
+            //->whereNotNull('soon_to_weds.blacklisted_at')
+            //->whereNotNull('vendors.blacklisted_at')
+            ->get();
+
+        //dd($blacklists);
+
+        return view('admin.blacklist.blacklist')->with(['blacklists' => $blacklists]);
+    }
+
+    public function audit_logs()
+    {
+        $audits = DB::table('audit_logs')
+            ->select('*')
+            ->get();
+
+        $stw = DB::table('soon_to_weds')
+            ->select('id', 'bride_first_name AS first_name', 'groom_first_name as last_name', 'user_type', 'last_login_at')
+            ->whereNotNull('last_login_at');
+
+        $vendor = DB::table('vendors')
+            ->select('id', 'first_name', 'last_name', 'user_type', 'last_login_at')
+            ->whereNotNull('last_login_at');
+
+        $logins = DB::table('admins')
+            ->select('id', 'first_name', 'last_name', 'user_type', 'last_login_at')
+            ->whereNotNull('last_login_at')
+            ->unionAll($stw)
+            ->unionAll($vendor)
+            ->get();
+
+        return view ('admin.audits')->with(['audits' => $audits])->with(['logins' => $logins]);
     }
 }

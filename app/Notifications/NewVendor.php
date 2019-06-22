@@ -44,9 +44,9 @@ class NewVendor extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->line('A new vendor has registered. Please confirm whether their inputted business credentials
-                are valid. If so, please click the button below to verify their account.')
-            ->action('Approve Vendor', route('admin.vendors.approve', $this->new_vendor->id));
+            ->line('A new vendor with the email ' . $this->new_vendor->email . ' has registered. Please confirm whether their inputted business credentials
+                are valid. If so, please click the button below to view their credentials.')
+            ->action('Approve Vendor', route('admin.vendors'));
     }
 
     /**
