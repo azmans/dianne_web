@@ -1,4 +1,4 @@
-@extends('layouts.dashboard')
+@extends('layouts.vendordashboard')
 
 @section('title', 'Income | DIANNE')
 
@@ -6,7 +6,7 @@
     <div class="container" style="margin-top: 10%">
         <div class="row justify-content-center">
             <div class="col-md-12">
-                <h3>My Payments</h3>
+                <h3>My Income</h3>
                 <div class="table-responsive">
                     @if (session('message'))
                         <div class="alert alert-success" role="alert">
@@ -36,7 +36,7 @@
                         @empty
                             <tr>
                                 <td colspan="4">No payment transactions entered.</td>
-                                <a class="btn button_1" role="button" href="/vendor/{{ $list->id }}/income/add">Add Income</a>
+                                <a class="btn button_1" role="button" href="/vendor/{{ auth()->guard('vendor')->user()->id }}/income/add">Add Income</a>
                             </tr>
                         @endforelse
                     </table>
@@ -73,7 +73,7 @@
                             <th>Full or Installment:</th> <td></td>
                         </tr>
                         <tr>
-                            <th>Date of Payment:</th> <td>{{ $list->date_paid }}</td>
+                            <th>Date of Payment:</th> <td>{{ \Carbon\Carbon::parse($list->date_paid)->format('d F Y') }}</td>
                         </tr>
                     </table>
                     @endforeach

@@ -33,12 +33,14 @@
                             @forelse ($vendors as $vendor)
                                 <tr>
                                     <td>{{ $vendor->id }}</td>
-                                    <td><img class="img-responsive" height="40" width="70" src="/storage/images/{{ $vendor->profile_picture }}"></td>
+                                    <td><img class="img-responsive" height="50" width="60" src="/storage/images/{{ $vendor->profile_picture }}"></td>
                                     <td>
                                         @if(is_null($vendor->blacklisted_at))
                                             Active
-                                        @else
+                                        @elseif(!is_null($vendor->blacklisted_at))
                                             Blacklisted
+                                        @elseif(is_null($vendor->approved_at))
+                                            Awaiting Approval
                                         @endif
                                     </td>
                                     <td>{{ $vendor->company_name }}</td>
@@ -57,6 +59,7 @@
                                 </tr>
                             @endforelse
                         </table>
+                        {{ $vendors->links() }}
                     </div>
                 </div>
             </div>

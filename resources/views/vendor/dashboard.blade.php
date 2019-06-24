@@ -24,13 +24,17 @@
                     <p>TIN: {{ $profile->tin }}</p>
                     <p>Mayor's Permit: {{ $profile->mayors_permit }}</p>
                     <div class="buttons row">
-                        <a href="/vendor/dashboard/edit/{{ $profile->id }}" class="btn button_1">Edit Profile</a>
-                        <a href="#" class="btn button_1" role="button">Delete Profile</a>
+                        <a href="/vendor/dashboard/edit/{{ $profile->id }}" class="btn btn-custom">Edit Profile</a>
+                        <a href="/vendor/account/{{ $profile->id }}/delete" class="btn btn-danger" role="button">Delete Account</a>
                     </div>
                 </div>
 
                 <div class="profile-picture" style="margin-bottom: 8%">
-                    <img class="profile-pic img-responsive" id="vendorprofilepic" src="/storage/images/{{ $profile->profile_picture }}">
+                    @if(!is_null($profile->profile_picture))
+                        <img class="profile-pic img-responsive" id="vendorprofilepic" src="/storage/images/{{ $profile->profile_picture }}">
+                    @else
+                        <img src="/img/user.png" class="profile-pic img-responsive" id="vendorprofilepic" alt="Avatar">
+                    @endif
 
                     <form method="POST" enctype="multipart/form-data">
                         @csrf
@@ -43,7 +47,6 @@
                         </div>
                     </form>
                 </div>
-
                 @endforeach
         </div>
     </div>

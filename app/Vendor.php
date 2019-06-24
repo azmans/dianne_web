@@ -2,7 +2,6 @@
 
 namespace App;
 
-use App\Traits\Auditable;
 use App\Notifications\VendorResetPassword;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -10,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Vendor extends Authenticatable
 {
-    use Notifiable, Auditable;
+    use Notifiable;
 
     protected $guard = 'vendor';
 

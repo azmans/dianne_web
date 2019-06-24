@@ -7,38 +7,45 @@
         <div class="row features text-left">
             <div class="sidenav">
                 <h6>Vendor Categories</h6>
-                <a href="#">Bridal Salon</a>
-                <a href="#">Beauty Salon</a>
-                <a href="#">Entertainment</a>
-                <a href="#">Jewelers</a>
-                <a href="#">Venue</a>
-                <a href="#">Photographers</a>
-                <a href="#">Videographers</a>
-                <a href="#">Officiants</a>
-                <a href="#">Caterers</a>
-                <a href="#">Bar Service</a>
-                <a href="#">Florist</a>
-                <a href="#">Photobooths</a>
-                <a href="#">Decor</a>
-                <a href="#">Transportation</a>
-                <a href="#">Invitations</a>
-                <a href="#">Wedding Favors</a>
-                <a href="#">Wedding Planners</a>
-                <a href="#">Others</a>
-                <br>
+                    <a href="#">Bridal Salon</a>
+                    <a href="#">Beauty Salon</a>
+                    <a href="#">Entertainment</a>
+                    <a href="#">Jewelers</a>
+                    <a href="#">Venue</a>
+                    <a href="#">Photographers</a>
+                    <a href="#">Videographers</a>
+                    <a href="#">Officiants</a>
+                    <a href="#">Caterers</a>
+                    <a href="#">Bar Service</a>
+                    <a href="#">Florist</a>
+                    <a href="#">Photobooths</a>
+                    <a href="#">Decor</a>
+                    <a href="#">Transportation</a>
+                    <a href="#">Invitations</a>
+                    <a href="#">Wedding Favors</a>
+                    <a href="#">Wedding Planners</a>
+                    <a href="#">Others</a>
+                    <br>
                 <h6>Price Range</h6>
-                <select name="price">
-                    <option value="p">&#8369;</option>
-                    <option value="pp">&#8369;&#8369;</option>
-                    <option value="ppp">&#8369;&#8369;&#8369;</option>
-                </select>
+                    <select name="price">
+                        <option value="p">&#8369;</option>
+                        <option value="pp">&#8369;&#8369;</option>
+                        <option value="ppp">&#8369;&#8369;&#8369;</option>
+                    </select>
+                </div>
             </div>
+        </nav>
+
 
             <div class="row">
                 @foreach($items as $item)
                 <div class="column">
                     <div class="card">
-                        <img src="storage/images/{{ $item->profile_picture }}" width="100" height="170" class="imgcenter img-responsive" alt="Dress">
+                        @if(!is_null($item->profile_picture))
+                        <img src="storage/images/{{ $item->profile_picture }}" width="70" height="130" class="imgcenter img-responsive" alt="Avatar">
+                        @else
+                            <img src="/img/user.png" width="70" height="130" class="imgcenter img-responsive" alt="Avatar">
+                        @endif
                         <p class="vendorname">{{ $item->first_name }} {{ $item->last_name }}</p>
                         <p class="vendortype">{{ $item->vendor_type }}</p>
 
@@ -57,7 +64,7 @@
                 </div>
                 @endforeach
             </div>
-        </div>
+            {{ $items->links() }}
     </div>
 
 @endsection

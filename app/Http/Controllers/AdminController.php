@@ -51,7 +51,7 @@ class AdminController extends Controller
             $vendor->notify(new VendorApproved($vendor));
         }
 
-        return redirect()->route('admin.vendors.index')->withMessage('Vendor has been approved successfully.');
+        return redirect()->route('admin.new-vendors')->withMessage('Vendor has been approved successfully.');
     }
 
     public function reject($id)
@@ -63,19 +63,19 @@ class AdminController extends Controller
             $vendor->notify(new VendorRejected($vendor));
         }
 
-        return redirect()->route('admin.bookings.index')->withMessage('Vendor has been rejected.');
+        return redirect()->route('admin.new-vendors')->withMessage('Vendor has been rejected.');
     }
 
     public function soon_to_weds()
     {
-        $users = User::all();
+        $users = User::paginate(10);
 
         return view('admin.users')->with(['users' => $users]);
     }
 
     public function vendors()
     {
-        $vendors = Vendor::all();
+        $vendors = Vendor::paginate(10);
 
         return view('admin.vendors')->with(['vendors' => $vendors]);
     }
@@ -213,7 +213,7 @@ class AdminController extends Controller
     {
         $audits = DB::table('audit_logs')
             ->select('*')
-            ->get();
+            ->paginate(10);
 
         $stw = DB::table('soon_to_weds')
             ->select('id', 'bride_first_name AS first_name', 'groom_first_name as last_name', 'user_type', 'last_login_at')
@@ -228,7 +228,7 @@ class AdminController extends Controller
             ->whereNotNull('last_login_at')
             ->unionAll($stw)
             ->unionAll($vendor)
-            ->get();
+            ->paginate(10);
 
         return view ('admin.audits')->with(['audits' => $audits])->with(['logins' => $logins]);
     }

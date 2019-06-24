@@ -44,6 +44,7 @@ class VendorApproved extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
+            ->from('admin@dianne.com', 'DIANNE Admin')
             ->line('Your account with the email ' . $this->new_vendor->email . ' at DIANNE has been approved.
                 You may now log in to your account.')
             ->action('Log In', route('vendor.login'));

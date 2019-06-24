@@ -44,6 +44,7 @@ class VendorRejected extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
+            ->from('admin@dianne.com', 'DIANNE Admin')
             ->line('Your registration to DIANNE with the email ' . $this->vendor_rejected->email . ' has 
                 been rejected. Please double check your business credentials.')
             ->action('Sign up again', route('vendor.register'));

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\BookingRejected;
 use App\Notifications\BookingAccepted;
+use App\Notifications\BookingCancelledVendor;
 use App\Notifications\NewUserReport;
 use DB;
 use PDF;
@@ -11,7 +13,9 @@ use App\Portfolio;
 use App\User;
 use App\Vendor;
 use App\Income;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
 class VendorController extends Controller
@@ -62,17 +66,19 @@ class VendorController extends Controller
         return view('vendor.edit')->with(['profile' => $profile]);
     }
 
-    public function update(Request $request, $id) {
+    public function update_profile(Request $request, $id) {
         $profile = Vendor::find($id);
 
         $profile->first_name = $request->first_name;
         $profile->last_name = $request->last_name;
+        $profile->email = $request->email;
         $profile->mobile = $request->mobile;
         $profile->city = $request->city;
         $profile->price_range = $request->price_range;
 
         $profile->update(['first_name' => $request->first_name,
                             'last_name' => $request->last_name,
+                            'email' => $request->email,
                             'mobile' => $request->mobile,
                             'city' => $request->city,
                             'price_range' => $request->price_range,
@@ -82,12 +88,18 @@ class VendorController extends Controller
         return redirect('/vendor/dashboard');
     }
 
-    public function update_profile_picture(Request $request, $id)
+    public function update_profile_picture(Request $request)
     {
-        $profile = Vendor::find($id);
+        $profile = Vendor::where('id', '=', auth()->guard('vendor')->user()->id)
+            ->first();
 
         if ($request->hasFile('profile_picture'))
         {
+            $image = public_path("/images/{$profile->profile_picture}"); // get previous image from folder
+            if (file_exists($image)) { // unlink or remove previous image from folder
+                unlink($image);
+            }
+
             $request->validate([
                 'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
@@ -104,6 +116,28 @@ class VendorController extends Controller
         }
     }
 
+    public function view_delete($id)
+    {
+        $profile = Vendor::find($id);
+
+        return view('vendor.delete')->with(['profile' => $profile]);
+    }
+
+    public function delete($id)
+    {
+        $profile = Vendor::find($id);
+
+        $profile->delete();
+
+        $image = str_replace('/storage', '', $profile->image_path);
+
+        Storage::delete('/public' . $image);
+
+        //Storage::delete(public_path('/images/{$profile->profile_picture}'));
+
+        return view('index');
+    }
+
     public function requests()
     {
         $lists = DB::table('bookings')
@@ -116,12 +150,15 @@ class VendorController extends Controller
             ->where('bookings.vendor_id', auth()->guard('vendor')->user()->id)
             ->get();
 
-        return view('vendor.bookings')->with('lists', $lists);
+        return view('vendor.booking.new-bookings')->with('lists', $lists);
     }
 
     public function accept(Request $request, $id)
     {
         $soon_to_wed = User::findOrFail($id);
+
+        $vendor = Vendor::where('id', auth()->guard('vendor')->user()->id)
+            ->first();
 
         $soon_to_wed->vendor_bookings()->updateExistingPivot(auth()->guard('vendor')->user()->id,
             ['status' => 'Accepted']);
@@ -132,21 +169,71 @@ class VendorController extends Controller
             'deposit_paid' => $request['deposit_paid']
         ]);
 
-        //$soon_to_wed->notify(new BookingRejected());
+        $soon_to_wed->notify(new BookingAccepted($vendor));
 
-        return redirect()->route('vendor.bookings')->withMessage('You have successfully accepted this booking request.');
+        return redirect()->route('vendor.booking.new-bookings')->withMessage('You have successfully accepted this booking request.');
     }
 
-    public function reject($id)
+    public function reject_mail($id)
     {
-        $soon_to_wed = User::findOrFail($id);
+        $user = User::find($id);
 
-        $soon_to_wed->vendor_bookings()->updateExistingPivot(auth()->guard('vendor')->user()->id,
+        return view('reject')->with(['user' => $user]);
+    }
+
+    public function reject_booking(Request $request, $id)
+    {
+        $user = User::find($id);
+
+        $vendor = Vendor::where('id', auth()->guard('vendor')->user()->id)->first();
+
+        $user->vendor_bookings()->updateExistingPivot(auth()->guard('vendor')->user()->id,
             ['status' => 'Rejected']);
 
-        //$soon_to_wed->notify(new BookingAccepted());
+        $data = [
+            'bride_first_name' => $user->bride_first_name,
+            'bride_last_name' => $user->bride_last_name,
+            'groom_first_name' => $user->groom_first_name,
+            'groom_last_name' => $user->groom_last_name,
+            'stw_email' => $user->email,
+            'first_name' => $vendor->first_name,
+            'last_name' => $vendor->last_name,
+            'email' => $vendor->email,
+        ];
 
-        return redirect()->route('vendor.bookings')->withMessage('You have just rejected this booking request.');
+        Mail::send(new BookingRejected($request, $data), ['data' => $data]);
+
+        return back()->withMessage('You have successfully rejected this user.');
+    }
+
+    public function manage_bookings()
+    {
+        $bookings = DB::table('bookings')
+            ->select('bookings.*', 'soon_to_weds.*')
+            ->where('vendor_id', auth()->guard('vendor')->user()->id)
+            ->where('status', '=', 'Accepted')
+            ->orWhere('status', '=', 'Rejected')
+            ->join('soon_to_weds', 'soon_to_weds.id', '=', 'bookings.soon_to_wed_id')
+            ->get();
+
+        return view('vendor.booking.bookings')->with(['bookings' => $bookings]);
+    }
+
+    public function cancel_booking($id)
+    {
+        $user = User::find($id);
+
+        $vendor = Vendor::where('id', auth()->guard('vendor')->user()->id)
+            ->first();
+
+        $user->vendor_bookings()->updateOrCreate(auth()->guard('vendor')->user()->id, [
+            'cancel_date' => now(),
+            'status' => 'Canceled'
+        ]);
+
+        $user->notify(new BookingCancelledVendor($vendor));
+
+        return redirect()->route('vendor.booking.bookings')->withMessage('You have successfully cancelled an appointment with this user.');
     }
 
     public function clients()
@@ -265,7 +352,7 @@ class VendorController extends Controller
             ->where('incomes.vendor_id', '=', auth()->guard('vendor')->user()->id)
             ->get();
 
-        return view('auth.income.incomes')->with(['lists' => $lists]);
+        return view('vendor.income.incomes')->with(['lists' => $lists]);
     }
 
     public function add_income($id)
@@ -277,7 +364,7 @@ class VendorController extends Controller
             ->where('my_clients.soon_to_wed_id', $id)
             ->get());
 
-        return view('auth.income.add', $users)->with(['vendors' => $vendors]);
+        return view('vendor.income.add', $users)->with(['vendors' => $vendors]);
     }
 
     public function save_income(Request $request, $id)
@@ -291,14 +378,14 @@ class VendorController extends Controller
             'date_paid' => $request['date_paid']
         ]);
 
-        return view('auth.income.incomes')->withMessage('You have successfully added a payment transaction.');
+        return view('vendor.income.incomes')->withMessage('You have successfully added a payment transaction.');
     }
 
     public function edit_income($id)
     {
         $income = Income::find($id);
 
-        return view('auth.income.edit')->with(['income' => $income]);
+        return view('vendor.income.edit')->with(['income' => $income]);
     }
 
     public function update_income(Request $request, $id)
@@ -319,6 +406,31 @@ class VendorController extends Controller
             'status' => $request->status,
             'date_paid' => $request->date_paid]);
 
-        return view('auth.income.incomes')->withMessage('You have saved changes to your couple page successfully.');
+        return view('vendor.income.incomes')->withMessage('You have saved changes to your couple page successfully.');
+    }
+
+    public function feedback()
+    {
+        $feedbacks = DB::table('feedbacks')
+            ->select('feedbacks.*', 'soon_to_weds.*', 'vendors.*')
+            ->join('soon_to_weds', 'soon_to_weds.id', '=', 'feedbacks.soon_to_wed_id')
+            ->join('vendors', 'vendors.id', '=', 'feedbacks.vendor_id')
+            ->where('feedbacks.vendor_id', auth()->guard('vendor')->user()->id)
+            ->get();
+
+        return view('vendor.feedback')->with(['feedbacks' => $feedbacks]);
+    }
+
+    public function summary()
+    {
+        $bookings = DB::table('bookings')
+            ->select(['bookings.*', 'soon_to_weds.id', 'soon_to_weds.bride_first_name',
+                'soon_to_weds.bride_last_name', 'soon_to_weds.groom_first_name', 'soon_to_weds.groom_last_name'])
+            ->join('soon_to_weds', 'soon_to_weds.id', '=', 'bookings.soon_to_wed_id')
+            ->where('bookings.status', 'Pending')
+            ->where('bookings.vendor_id', Auth::id())
+            ->get();
+
+        return view('vendor.summary')->with(['bookings' => $bookings]);
     }
 }

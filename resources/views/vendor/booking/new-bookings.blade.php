@@ -25,11 +25,11 @@
                         @forelse($lists as $list)
                         <tr>
                             <td>{{ $list->bride_first_name }} {{ $list->bride_last_name }} & {{ $list->groom_first_name }} {{ $list->groom_last_name }}</td>
-                            <td>{{ $list->date }} {{ $list->time }}</td>
+                            <td>{{ \Carbon\Carbon::parse($list->date)->format('d F Y') }} {{ \Carbon\Carbon::parse($list->time)->format('h:m A') }}</td>
                             <td>{{ $list->status }}</td>
-                            <td><a href="#" class="btn btn-custom btn-sm" data-toggle="modal" data-target="#booking_details">Details</a></td>
-                            <td><a href="/vendor/bookings/{{ Auth::id() }}/accept" class="btn btn-success btn-sm">Accept</a></td>
-                            <td><a href="#" class="btn btn-danger btn-sm">Reject</a></td>
+                            <td><a href="#" class="btn btn-custom btn-sm" data-toggle="modal" data-target="#booking_details-{{ $list->id }}">Details</a></td>
+                            <td><a href="/vendor/bookings/{{ $list->id }}/accept" class="btn btn-success btn-sm">Accept</a></td>
+                            <td><a href="/vendor/bookings/{{ $list->id }}/reject" class="btn btn-danger btn-sm">Reject</a></td>
                         </tr>
                         @empty
                             <tr>
@@ -45,7 +45,8 @@
 
     <!-- Modal -->
     @if (!$lists->isEmpty())
-    <div class="modal fade" id="booking_details" tabindex="-1" role="dialog" aria-labelledby="details" aria-hidden="true">
+    @foreach($lists as $list)
+    <div class="modal fade" id="booking_details-{{ $list->id }}" tabindex="-1" role="dialog" aria-labelledby="details" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -55,12 +56,10 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    @foreach($lists as $list)
-                        <p><b>Clients: </b>{{ $list->bride_first_name }} {{ $list->bride_last_name }} & {{ $list->groom_first_name }} {{ $list->groom_last_name }}</p>
-                        <p><b>Date and Time of Appointment: </b>{{ $list->date }} {{ $list->time }}</p>
-                        <p><b>Details: </b>{{ $list->details }}</p>
-                        <p><i>Requested at: </i> {{ $list->created_at }}</p>
-                    @endforeach
+                    <p><b>Clients: </b>{{ $list->bride_first_name }} {{ $list->bride_last_name }} & {{ $list->groom_first_name }} {{ $list->groom_last_name }}</p>
+                    <p><b>Date and Time of Appointment: </b>{{ $list->date }} {{ $list->time }}</p>
+                    <p><b>Details: </b>{{ $list->details }}</p>
+                    <p><i>Requested at: </i> {{ $list->created_at }}</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -68,5 +67,6 @@
             </div>
         </div>
     </div>
+    @endforeach
     @endif
 @endsection

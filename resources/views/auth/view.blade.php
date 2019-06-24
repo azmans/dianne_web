@@ -35,7 +35,11 @@
 
                     <div class="right">
                         <div class="profile-picture">
-                            <img class="profile-pic" id="vendor-pic" src="/storage/images/{{ $profile->profile_picture }}">
+                            @if(!is_null($profile->profile_picture))
+                            <img class="profile-pic img-responsive" id="vendor-pic" src="/storage/images/{{ $profile->profile_picture }}">
+                            @else
+                                <img src="/img/user.png" id="vendor-pic" class="profile-pic img-responsive" alt="Avatar">
+                            @endif
                         </div>
 
                         <div class="vendor_buttons">

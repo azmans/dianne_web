@@ -9,43 +9,50 @@
                 <form method="POST" enctype="multipart/form-data">
                     @csrf
 
-                    <div class="card-header">
+                    <div class="card-body col-lg-5">
                         <br>
-                        <p class="card-category col-lg-5">
-                        <label for="first_name">First Name:</label>
-                        <input type="text" class="form-control" id="first_name" name="first_name"
-                               value="{{ $profile->first_name }}"/>
-                        </p>
+                        <div class="form-group">
+                            First Name:
+                            <input type="text" class="form-control" id="first_name" name="first_name"
+                                   value="{{ $profile->first_name }}"/>
+                        </div>
 
-                        <p class="card-category col-lg-5">
-                        <label for="last_name">Last Name:</label>
-                        <input type="text" class="form-control" id="last_name" name="last_name"
-                               value="{{ $profile->last_name }}"/>
-                        </p>
+                        <div class="form-group">
+                            Last Name:
+                            <input type="text" class="form-control" id="last_name" name="last_name"
+                                   value="{{ $profile->last_name }}"/>
+                        </div>
 
-                        <p class="card-category col-lg-5">
+                        <div class="form-group">
+                            Email:
+                            <input type="email" class="form-control" id="email" name="email"
+                                   placeholder="Email" value="{{ $profile->email }}"/>
+                        </div>
+
+                        <div class="form-group">
                             <label for="mobile">Mobile:</label>
                             <input type="number" class="form-control" id="mobile" name="mobile"
-                                   placeholder="Mobile" value="{{ $profile->mobile }}"/></p>
+                                   placeholder="Mobile" value="{{ $profile->mobile }}"/>
+                        </div>
 
-                        <p class="card-category col-lg-5">
-                            <label for="city">City:</label>
+                        <div class="form-group">
+                            City:
                             <input type="text" class="form-control" id="city" name="city" placeholder="City"
                                    value="{{ $profile->city }}">
-                        </p>
+                        </div>
 
-                        <p class="card-category col-lg-5">
-                            <label for="price_range">Price Range:</label>
+                        <div class="form-group">
+                            Price Range:
                             <select class="form-control" id="price_range" name="price_range" required>
                                 <option>Budget</option>
                                 <option>Midrange</option>
                                 <option>Highend</option>
                             </select>
-                        </p>
+                        </div>
 
-                        <div class="row">
-                            <button type="submit" class="btn button_1" id="updateProfile">Save Profile</button>
-                            <a class="btn button_1" role="button" href="/vendor/dashboard">Cancel</a>
+                        <div class="buttons row" style="margin-top: 20%">
+                            <button type="submit" class="btn btn-custom">Save Profile</button>
+                            <a class="btn btn-custom" role="button" href="/vendor/dashboard">Cancel</a>
                         </div>
                     </div>
                 </form>

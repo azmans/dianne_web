@@ -11,7 +11,7 @@
                 <form action="{{ route('auth.vendors') }}">
                     <div class="row">
                         <div class="col-md-4">
-                            <input class="form-control form-control-sm" type="search" name="search">
+                            <input class="form-control" type="search" name="search">
                         </div>
 
                         <div class="col-md-2 col-3">
@@ -57,7 +57,7 @@
                                 <td><a href="{{ route('auth.view', $list->id) }}"
                                        class="btn btn-custom btn-sm">View Profile</a></td>
                                 <td><a href="{{ route('auth.vendors.remove', $list->id) }}"
-                                       class="btn btn-danger btn-sm">Remove</a></td>
+                                       class="btn btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
                             </tr>
                         @empty
                             <tr>
@@ -65,6 +65,7 @@
                             </tr>
                         @endforelse
                     </table>
+                    {{ $lists->links() }}
                 </div>
             </div>
         </div>

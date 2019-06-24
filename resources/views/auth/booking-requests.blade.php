@@ -6,7 +6,7 @@
     <div class="container" style="margin-top: 10%">
         <div class="row justify-content-center">
             <div class="col-md-12">
-                <h3>My Vendors</h3>
+                <h3>Booking Requests</h3>
                 <div class="table-responsive">
                     @if (session('message'))
                         <div class="alert alert-success" role="alert">
@@ -25,10 +25,14 @@
                         @forelse ($lists as $list)
                             <tr>
                                 <td>{{ $list->first_name }} {{ $list->last_name }}</td>
-                                <td>{{ $list->date }} {{ $list->time }}</td>
+                                <td>{{ \Carbon\Carbon::parse($list->date)->format('d F Y') }} {{ \Carbon\Carbon::parse($list->time)->format('h:m A') }}</td>
                                 <td>{{ $list->status }}</td>
-                                <td><a href="#" class="btn btn-custom btn-sm" data-toggle="modal" data-target="#booking_details">Details</a></td>
-                                <td><a href="#" class="btn btn-danger btn-sm">Cancel Booking</a></td>
+                                <td><a href="#" class="btn btn-custom btn-sm" data-toggle="modal" data-target="#booking_details-{{ $list->id }}">Details</a></td>
+                                @if(is_null($list->cancel_date))
+                                <td><a href="/booking-requests/{{ $list->vendor_id }}/cancel" class="btn btn-danger btn-sm" onclick="return cancel();">Cancel Booking</a></td>
+                                @else
+                                <td></td>
+                                @endif
                             </tr>
                         @empty
                             <tr>
@@ -43,7 +47,8 @@
 
     <!-- Modal -->
     @if (!$lists->isEmpty())
-    <div class="modal fade" id="booking_details" tabindex="-1" role="dialog" aria-labelledby="details" aria-hidden="true">
+    @foreach($lists as $list)
+    <div class="modal fade" id="booking_details-{{ $list->id }}" tabindex="-1" role="dialog" aria-labelledby="details" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -53,7 +58,6 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    @foreach($lists as $list)
                     <table class="table">
                         <tr>
                             <th>Vendor Name:</th> <td>{{ $list->first_name }} {{ $list->last_name }}</td>
@@ -77,7 +81,6 @@
                             <td>Requested at: {{ $list->created_at }}</td>
                         </tr>
                     </table>
-                    @endforeach
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -85,5 +88,12 @@
             </div>
         </div>
     </div>
+    @endforeach
     @endif
+
+    <script type="text/javascript">
+        function cancel() {
+            confirm('Are you sure you want to cancel this booking?');
+        }
+    </script>
 @endsection

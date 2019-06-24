@@ -40,6 +40,9 @@ Route::middleware(['approved'])->group(function() {
     // Update new profile picture
     Route::post('/vendor/dashboard', 'VendorController@update_profile_picture');
 
+    // View vendor summary
+    Route::get('/vendor/summary', 'VendorController@summary')->name('vendor.summary');
+
     // View soon-to-wed profile
     Route::get('view/soon-to-wed/{id}', 'VendorController@view_profile')->name('vendor.view');
 
@@ -58,12 +61,19 @@ Route::middleware(['approved'])->group(function() {
     // Update income in the database
     Route::post('/vendor/{id}/income/edit', 'VendorController@update_income');
 
-    // View vendor bookings
-    Route::get('/vendor/bookings', 'VendorController@requests')->name('vendor.bookings');
+    // View new vendor bookings
+    Route::get('/vendor/bookings/new', 'VendorController@requests')->name('vendor.booking.new-bookings');
     // Accept booking
-    Route::get('/vendor/bookings/{id}/accept', 'VendorController@accept')->name('vendor.bookings.accept');
-    // Reject booking
-    Route::get('/vendor/bookings/{id}/reject', 'VendorController@reject')->name('vendor.bookings.reject');
+    Route::get('/vendor/bookings/{id}/accept', 'VendorController@accept')->name('vendor.booking.new-bookings.accept');
+    // Manage accepted bookings
+    Route::get('/vendor/bookings', 'VendorController@manage_bookings')->name('vendor.booking.bookings');
+    // View booking history
+    Route::get('/vendor/bookings/history', 'VendorController@archive_bookings')->name('vendor.booking.history');
+
+    // Compose rejection mail
+    Route::get('/vendor/bookings/{id}/reject', 'VendorController@reject_mail')->name('reject');
+    // Send rejection mail
+    Route::post('/vendor/bookings/{id}/reject', 'VendorController@reject_booking');
 
     // View My Clients
     Route::get('/vendor/clients', 'VendorController@clients')->name('vendor.clients');
@@ -83,6 +93,13 @@ Route::middleware(['approved'])->group(function() {
     // Update portfolio in database
     Route::post('/vendor/{id}/portfolio/edit', 'VendorController@update_portfolio');
 
+    // View feedback received
+    Route::get('/vendor/feedback', 'VendorController@feedback')->name('vendor.feedback');
+
+    // Delete account
+    Route::get('/vendor/account/{id}/delete', 'VendorController@view_delete')->name('vendor.delete');
+    // Confirm deletion
+    Route::post('/vendor/account/{id}/delete', 'VendorController@delete');
 });
 
 Route::middleware(['admin'])->group(function () {
@@ -230,6 +247,8 @@ Route::group(['middleware' => ['web']], function() {
     Route::post('/request/profile/{id}/book', 'SoonToWedController@book')->name('auth.request.book');
     // View list of booking requests
     Route::get('/booking-requests', 'SoonToWedController@booking_list')->name('auth.booking-requests');
+    // Cancel booking
+    Route::get('/booking-requests/{id}/cancel', 'SoonToWedController@cancel_booking');
 
     // Save a vendor to My Vendors
     Route::post('/save/profile/{id}', 'SoonToWedController@save_vendor')->name('auth.view.save');

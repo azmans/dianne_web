@@ -41,6 +41,7 @@ class NewBooking extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
+            ->from('admin@dianne.com', 'DIANNE Admin')
             ->line('A client has requested a booking with you.')
             ->action('View Booking', route('vendor.bookings'));
     }

@@ -33,8 +33,8 @@
                         <p>My Profile</p>
                     </a>
                 </li>
-                <li>
-                    <a href="./ #">
+                <li{{ request()->is('/vendor/summary') ? ' class=active' : '' }}>
+                    <a href="/vendor/summary">
                         <i class="nc-icon nc-layout-11"></i>
                         <p>Summary</p>
                     </a>
@@ -45,11 +45,36 @@
                         <p>Vendor Portfolio</p>
                     </a>
                 </li>
-                <li{{ request()->is('/vendor/bookings') ? 'class=active' : '' }}>
-                    <a href="/vendor/bookings">
+                <li>
+                    <a data-toggle="collapse" href="#bookings">
                         <i class="nc-icon nc-badge"></i>
-                        <p>Manage Bookings</p>
+                        <p>Bookings
+                            <b class="caret"></b>
+                        </p>
                     </a>
+
+                    <div class="collapse" id="bookings">
+                        <ul class="nav">
+                            <li>
+                                <a href="/vendor/bookings/new">
+                                    <span class="sidebar-mini-icon"><i class="nc-icon nc-diamond"></i></span>
+                                    <span class="sidebar-normal">New Bookings</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/vendor/bookings">
+                                    <span class="sidebar-mini-icon"><i class="nc-icon nc-satisfied"></i></span>
+                                    <span class="sidebar-normal">Manage</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/vendor/bookings/history">
+                                    <span class="sidebar-mini-icon"><i class="nc-icon nc-bell-55"></i></span>
+                                    <span class="sidebar-normal">History</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
                 <li{{ request()->is('/vendor/clients') ? 'class=active' : '' }}>
                     <a href="/vendor/clients">
@@ -63,8 +88,8 @@
                         <p>Income</p>
                     </a>
                 </li>
-                <li>
-                    <a href="./upgrade.html">
+                <li{{ request()->is('/vendor/feedback') ? 'class=active' : '' }}>
+                    <a href="/vendor/feedback">
                         <i class="nc-icon nc-satisfied"></i>
                         <p>Feedbacks</p>
                     </a>
@@ -85,7 +110,7 @@
                             <span class="navbar-toggler-bar bar3"></span>
                         </button>
                     </div>
-                    <a class="navbar-brand" href="#pablo">Dianne</a>
+                    <a class="navbar-brand" href="/vendor/dashboard">Dianne</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -96,7 +121,7 @@
                 <div class="collapse navbar-collapse justify-content-end" id="navigation">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link btn-magnify" href="marketplace">
+                            <a class="nav-link btn-magnify" href="/marketplace">
                                 <i class="nc-icon nc-shop"></i>
                                 <p>
                                     <span class="d-lg-none d-md-block">Marketplace</span>
@@ -104,7 +129,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn-magnify" href="#pablo">
+                            <a class="nav-link btn-magnify" href="#">
                                 <i class="nc-icon nc-chat-33"></i>
                                 <p>
                                     <span class="d-lg-none d-md-block">Messages</span>
@@ -112,7 +137,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn-rotate" href="#pablo">
+                            <a class="nav-link btn-rotate" href="#">
                                 <i class="nc-icon nc-tap-01"></i>
                                 <p>
                                     <span class="d-lg-none d-md-block">Report</span>
@@ -123,7 +148,7 @@
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="nc-icon nc-settings-gear-65"></i>
                                 <p>
-                                    <span class="d-lg-none d-md-block">Some Actions</span>
+                                    <span class="d-lg-none d-md-block"></span>
                                 </p>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">

@@ -91,7 +91,7 @@
                         </div>
                     </li>
                     <li{{ request()->is('vendors') ? ' class=active' : '' }}>
-                        <a href="/admin/vendors">
+                        <a href="/admin/vendors/approve">
                             <i class="nc-icon nc-bulb-63"></i>
                             <p>New Vendors</p>
                         </a>

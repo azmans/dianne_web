@@ -24,6 +24,14 @@ class User extends Authenticatable implements MustVerifyEmail
         'password', 'dob', 'wedding_date', 'profile_picture', 'last_login_at', 'blacklisted_at'
     ];
 
+    public function getProfilePictureAttribute()
+    {
+        if (! $this->attributes['profile_picture']) {
+            return '/img/user.png';
+        }
+            return $this->attributes['profile_picture'];
+    }
+
     /**
      * The attributes that should be hidden for arrays.
      *

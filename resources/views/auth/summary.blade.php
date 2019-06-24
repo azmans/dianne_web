@@ -23,7 +23,7 @@
                    </div>
                 </div>
            </div>
-
+            @if(!$budgets->isEmpty())
             <div class="col-lg-3">
                 <div class="card card-stats" id="budgetcard">
                     <div class="card-body">
@@ -39,20 +39,22 @@
                                     <h4 class="">Budget</h4>
                                 </div>
                             </div>
+                            @foreach($budgets as $budget)
                             <div class="col-7 col-md-8" id="budgetcontent">
                                 <div class="numbers">
                                     <p class="card-category" id="budgetlabel">Budget</p>
-                                    <p class="card-title">P 1,346<p>
+                                    <p class="card-title">&#8369; {{ $budget->budget }}<p>
                                 </div>
                                 <div class="numbers">
                                     <p class="card-category" id="budgetlabel">Total Expenses</p>
-                                    <p class="card-title">P 1,346<p>
+                                    <p class="card-title">&#8369; {{ $budget->used }}<p>
                                 </div>
                                 <div class="numbers">
                                     <p class="card-category" id="budgetlabel">Balance</p>
-                                    <p class="card-title">P 1,346<p>
+                                    <p class="card-title">&#8369; {{ $budget->difference }}<p>
                                 </div>
                             </div>
+                            @endforeach
                         </div>
                     </div>
                     <div class="card-footer">
@@ -60,7 +62,11 @@
                     </div>
                 </div>
             </div>
+            @else
+                <p>Huh</p>
+            @endif
 
+            @if(!$guests->isEmpty())
             <div class="col-md-3">
                 <div class="card card-stats">
                     <div class="card-body">
@@ -75,45 +81,44 @@
                                     <h4 class="">Guest List</h4>
                                 </div>
                             </div>
+                            @foreach($guests as $guest)
                             <div class="col-7 col-md-8" id="guestcard">
                                 <div class="numbers">
                                     <p class="card-category" id="label">Attending</p>
-                                    <p class="card-title" id="num">50<p>
+                                    <p class="card-title">{{ $guest->attending }}<p>
                                 </div>
                                 <div class="numbers">
                                     <p class="card-category" id="label">Plus Ones</p>
-                                    <p class="card-title" id="num">5<p>
+                                    <p class="card-title" id="num">{{ $guest->additional }}<p>
                                 </div>
                                 <div class="numbers">
                                     <p class="card-category" id="label">Total Guests</p>
-                                    <p class="card-title" id="num">55<p>
+                                    <p class="card-title" id="num">{{ $guest->total }}<p>
                                 </div>
                                 <hr>
                                 <div class="label1">
                                     <div class="numbers">
                                         <p class="card-category" id="label">Not Attending</p>
-                                        <p class="card-title" id="num">10<p>
+                                        <p class="card-title" id="num">{{ $guest->declined }}<p>
                                     </div>
                                     <div class="numbers">
                                         <p class="card-category" id="label">Did Not Respond</p>
-                                        <p class="card-title" id="num1">5<p>
+                                        <p class="card-title" id="num1">{{ $guest->pending }}<p>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <hr>
-                        <div class="stats">
-                            <i class="fa fa-calendar-o"></i> Response Due Date
+                            @endforeach
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        @else
+            <p>Huh</p>
+        @endif
 
         <div class="row">
-
+            @if(!$bookings->isEmpty())
             <div class="col-md-6" id="bookingreqcard">
                 <div class="card card-chart">
                     <div class="card-header">
@@ -123,82 +128,26 @@
                     <div class="table-responsive" id="bookingtable">
                         <table class="table">
                             <thead class=" text-primary">
-                            <th>
-                                Vendor
-                            </th>
-                            <th>
-                                Date/Time
-                            </th>
-                            <th>
-                                Status
-                            </th>
+                                <th>Vendor</th>
+                                <th>Date/Time</th>
+                                <th>Status</th>
                             </thead>
                             <tbody>
+                            @foreach($bookings as $booking)
                             <tr>
-                                <td>
-                                    Vendor Name
-                                </td>
-                                <td>
-                                    June 19 2019
-                                </td>
-                                <td>
-                                    Accepted
-                                </td>
-                                <td class="text-right">
-                                    <button class="btn button_1 listbtn1">View</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Vendor Name
-                                </td>
-                                <td>
-                                    June 19 2019
-                                </td>
-                                <td>
-                                    Accepted
-                                </td>
-                                <td class="text-right">
-                                    <button class="btn button_1 listbtn1">View</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Vendor Name
-                                </td>
-                                <td>
-                                    June 19 2019
-                                </td>
-                                <td>
-                                    Accepted
-                                </td>
-                                <td class="text-right">
-                                    <button class="btn button_1 listbtn1">View</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Vendor Name
-                                </td>
-                                <td>
-                                    June 19 2019
-                                </td>
-                                <td>
-                                    Accepted
-                                </td>
-                                <td class="text-right">
-                                    <button class="btn button_1 listbtn1">View</button>
-                                </td>
+                                <td>{{ $booking->first_name }} {{ $booking->last_name }}</td>
+                                <td>{{ \Carbon\Carbon::parse($booking->date)->format('d F Y') }} {{ \Carbon\Carbon::parse($booking->time)->format('h:m A') }}</td>
+                                <td>{{ $booking->status }}</td>
                             </tr>
                             </tbody>
+                            @endforeach
                         </table>
-                    </div>
-
-                    <div class="card-footer">
                     </div>
                 </div>
             </div>
-
+            @else
+                <p>No booking requests found.</p>
+            @endif
             <div class="col-md-3">
                 <div class="card ">
                     <div class="card-header">

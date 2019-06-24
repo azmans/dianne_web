@@ -25,52 +25,47 @@
                     <div class="tab-pane active" id="data_changes">
                         <div class="card" style="padding: 5%;">
                             <div class="table-responsive">
-                                @if (session('message'))
-                                    <div class="alert alert-success" role="alert">
-                                        {{ session('message') }}
-                                    </div>
-                                @endif
-
-                                    <table class="table">
+                                <table class="table">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>User ID</th>
+                                        <th>User Type</th>
+                                        <th>Subject</th>
+                                        <th>Description</th>
+                                        <th>Timestamp</th>
+                                    </tr>
+                                    @forelse($audits as $audit)
                                         <tr>
-                                            <th>ID</th>
-                                            <th>User ID</th>
-                                            <th>User Type</th>
-                                            <th>Subject</th>
-                                            <th>Description</th>
-                                            <th>Timestamp</th>
+                                            <td>{{ $audit->id }}</td>
+                                            <td>
+                                                @if(is_null($audit->soon_to_wed_id) && is_null($audit->vendor_id))
+                                                    {{ $audit->admin_id }}
+                                                @elseif(is_null($audit->admin_id) && is_null($audit->vendor_id))
+                                                    {{ $audit->soon_to_wed_id }}
+                                                @elseif(is_null($audit->soon_to_wed_id && is_null($audit->admin_id)))
+                                                    {{ $audit->vendor_id }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if(!is_null($audit->soon_to_wed_id))
+                                                    Soon-to-wed
+                                                @elseif(!is_null($audit->vendor_id))
+                                                    Vendor
+                                                @elseif(!is_null($audit->admin_id))
+                                                    Admin
+                                                @endif
+                                            </td>
+                                            <td>{{ $audit->subject_type }}</td>
+                                            <td>{{ $audit->description }}</td>
+                                            <td>{{ $audit->created_at }}</td>
                                         </tr>
-                                        @forelse($audits as $audit)
-                                            <tr>
-                                                <td>{{ $audit->id }}</td>
-                                                <td>
-                                                    @if(is_null($audit->soon_to_wed_id) && is_null($audit->vendor_id))
-                                                        {{ $audit->admin_id }}
-                                                    @elseif(is_null($audit->admin_id) && is_null($audit->vendor_id))
-                                                        {{ $audit->soon_to_wed_id }}
-                                                    @elseif(is_null($audit->soon_to_wed_id && is_null($audit->admin_id)))
-                                                        {{ $audit->vendor_id }}
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if(!is_null($audit->soon_to_wed_id))
-                                                        Soon-to-wed
-                                                    @elseif(!is_null($audit->vendor_id))
-                                                        Vendor
-                                                    @elseif(!is_null($audit->admin_id))
-                                                        Admin
-                                                    @endif
-                                                </td>
-                                                <td>{{ $audit->subject_type }}</td>
-                                                <td>{{ $audit->description }}</td>
-                                                <td>{{ $audit->created_at }}</td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="4">No audit logs found.</td>
-                                            </tr>
-                                        @endforelse
-                                    </table>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4">No audit logs found.</td>
+                                        </tr>
+                                    @endforelse
+                                    {{ $audits->links() }}
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -127,6 +122,7 @@
                                             <td colspan="4">No audit logs found.</td>
                                         </tr>
                                     @endif
+                                    {{ $logins->links() }}
                                 </table>
                             </div>
                         </div>

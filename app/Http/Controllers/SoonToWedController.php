@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BudgetItem;
+use App\Notifications\BookingCancelled;
 use DB;
 use PDF;
 use App\Budget;
@@ -72,9 +73,10 @@ class SoonToWedController extends Controller
         return redirect('/dashboard')->withMessage('Your profile has been successfully saved.');
     }
 
-    public function update_profile_picture(Request $request, $id)
+    public function update_profile_picture(Request $request)
     {
-        $profile = User::find($id);
+        $profile = User::where('id', '=', Auth::id())
+            ->first();
 
         if ($request->hasFile('profile_picture'))
         {
@@ -139,7 +141,7 @@ class SoonToWedController extends Controller
                 'vendors.first_name', 'vendors.last_name', 'vendors.vendor_type'])
             ->join('vendors', 'vendors.id', '=', 'soon_to_wed_vendor.vendor_id')
             ->where('soon_to_wed_vendor.soon_to_wed_id', Auth::id())
-            ->get();
+            ->paginate(10);
 
         return view('auth.vendors')->with('lists', $lists);
     }
@@ -162,12 +164,28 @@ class SoonToWedController extends Controller
         return back()->withMessage('You have successfully booked an appointment with this vendor.');
     }
 
+    public function cancel_booking($id)
+    {
+        $vendor = Vendor::find($id);
+
+        $user = User::where('id', Auth::id())
+            ->first();
+
+        $vendor->soon_to_wed_bookings()->updateOrCreate(Auth::id(), [
+            'cancel_date' => now(),
+            'status' => 'Canceled'
+        ]);
+
+        $vendor->notify(new BookingCancelled($user));
+
+        return redirect()->route('auth.booking-requests')->withMessage('You have successfully cancelled an appointment with this vendor.');
+    }
+
     public function booking_list()
     {
         $lists = DB::table('bookings')
-            ->select(['bookings.id', 'vendors.id', 'vendors.first_name', 'vendors.last_name', 'vendors.company_name',
-                'vendors.mobile', 'vendors.vendor_type', 'bookings.date', 'bookings.time', 'bookings.details', 'bookings.status',
-                'bookings.created_at'])
+            ->select(['bookings.id as booking_id', 'vendors.id as vendor_id', 'vendors.first_name', 'vendors.last_name', 'vendors.company_name',
+                'vendors.mobile', 'vendors.vendor_type', 'bookings.*'])
             ->join('vendors', 'vendors.id', '=', 'bookings.vendor_id')
             ->where('bookings.soon_to_wed_id', Auth::id())
             ->get();
@@ -625,7 +643,35 @@ class SoonToWedController extends Controller
 
     public function summary()
     {
-        return view('auth.summary');
+        $guests = DB::table('guests')
+            ->select(DB::raw('SUM(status = "Attending") as attending'),
+                DB::raw('SUM(plus_one = "1") as additional'),
+                DB::raw('SUM(plus_one = "1") + SUM(status = "Attending") as total'),
+                DB::raw('SUM(status = "Pending") as pending'),
+                DB::raw('SUM(status = "Declined") as declined'))
+            ->where('soon_to_wed_id', Auth::id())
+            ->get();
+
+        $budgets = DB::table('budgets')
+            ->select('budgets.*', 'soon_to_weds.id', 'vendors.*', 'budget_items.*',
+                DB::raw('SUM(budgets.budget) - SUM(budget_items.cost) as difference'),
+                DB::raw('SUM(budget_items.cost) as used'))
+            ->join('soon_to_weds', 'soon_to_weds.id', '=', 'budgets.soon_to_wed_id')
+            ->join('budget_items', 'budget_items.soon_to_wed_id', '=', 'soon_to_weds.id')
+            ->join('vendors', 'vendors.id', '=', 'budget_items.vendor_id')
+            ->where('budgets.soon_to_wed_id', Auth::id())
+            ->get();
+
+        $bookings = DB::table('bookings')
+            ->select(['bookings.id', 'vendors.id', 'vendors.first_name', 'vendors.last_name', 'vendors.company_name',
+                'vendors.mobile', 'vendors.vendor_type', 'bookings.date', 'bookings.time', 'bookings.details', 'bookings.status',
+                'bookings.created_at'])
+            ->join('vendors', 'vendors.id', '=', 'bookings.vendor_id')
+            ->where('bookings.soon_to_wed_id', Auth::id())
+            ->get();
+
+        return view('auth.summary')->with(['guests' => $guests])->with(['budgets' => $budgets])
+            ->with(['bookings' => $bookings]);
     }
 
     /*public function view_feedback()

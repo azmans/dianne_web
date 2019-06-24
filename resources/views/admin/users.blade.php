@@ -9,12 +9,6 @@
                 <div class="card" style="padding: 5%;">
                     <h3>Soon-to-weds</h3>
                     <div class="table-responsive">
-                        @if (session('message'))
-                            <div class="alert alert-success" role="alert">
-                                {{ session('message') }}
-                            </div>
-                        @endif
-
                         <table class="table">
                             <tr>
                                 <th>ID</th>
@@ -30,7 +24,7 @@
                             @forelse ($users as $user)
                                 <tr>
                                     <td>{{ $user->id }}</td>
-                                    <td><img class="img-responsive" height="50" width="70" src="/storage/images/{{ $user->profile_picture }}"></td>
+                                    <td><img class="img-responsive" height="50" width="60" src="/storage/images/{{ $user->profile_picture }}"></td>
                                     <td>
                                         @if(is_null($user->blacklisted_at))
                                             Active
@@ -51,6 +45,7 @@
                                 </tr>
                             @endforelse
                         </table>
+                        {{ $users->links() }}
                     </div>
                 </div>
             </div>

@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Vendor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,16 +12,16 @@ class BookingAccepted extends Notification
 {
     use Queueable;
 
-    private $booking;
+    private $vendor;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Vendor $vendor)
     {
-        //
+        $this->vendor = $vendor;
     }
 
     /**
@@ -43,7 +44,10 @@ class BookingAccepted extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->line('A vendor has accepted your booking.')
+            ->subject($this->vendor->first_name . ' ' . $this->vendor->last_name . ' has accepted your booking...')
+            ->from('admin@dianne.com', 'DIANNE Admin')
+            ->line('A vendor by the name of ' . $this->vendor->first_name . ' ' . $this->vendor->last_name . ' has
+                accepted your booking.')
             ->action('View Bookings', route('auth.booking-requests'));
     }
 

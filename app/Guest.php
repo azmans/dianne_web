@@ -14,7 +14,7 @@ class Guest extends Model
     protected $table = 'guests';
 
     protected $fillable = [
-        'first_name', 'last_name', 'allergy', 'plus_one', 'status'
+        'first_name', 'last_name', 'allergy', 'meal_type_id', 'plus_one', 'status'
     ];
 
     public function setAllergyAttribute($value)

@@ -27,9 +27,9 @@
                             <tr>
                                 <td>{{ $list->bride_first_name }} {{ $list->bride_last_name }}</td>
                                 <td>{{ $list->groom_first_name }} {{ $list->groom_last_name }}</td>
-                                <td><a href="#" class="btn btn-custom btn-sm" data-toggle="modal" data-target="#client_details">Details</a></td>
+                                <td><a href="#" class="btn btn-custom btn-sm" data-toggle="modal" data-target="#client_details-{{ $list->id }}">Details</a></td>
                                 <td><a href="/view/soon-to-wed/{{ $list->id }}" class="btn btn-custom btn-sm">View Profile</a></td>
-                                <td><a href="/vendor/client/{{ $list->id }}/edit" class="btn btn-primary btn-sm">Edit</a></td>
+                                <td><a href="/vendor/client/{{ $list->id }}/edit" class="btn btn-primary btn-sm"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a></td>
                             </tr>
                         @empty
                             <tr>
@@ -45,7 +45,7 @@
 
     <!-- Modal -->
     @if(!$lists->isEmpty())
-    <div class="modal fade" id="client_details" tabindex="-1" role="dialog" aria-labelledby="details" aria-hidden="true">
+    <div class="modal fade" id="client_details-{{ $list->id }}" tabindex="-1" role="dialog" aria-labelledby="details" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
